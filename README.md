@@ -1,8 +1,8 @@
 # EDS223-HW1
 
-Author: Marie Tolteca, Student at Bren School of Environmental Science and Managment, Masters in Environmental Data Science
-Data Source: EJScreen: Environmental Justice Screening and Mapping Tool
-Dataset: https://drive.google.com/file/d/1nG6Nj1bXfzQFOVMO8Km3eNy4SWu1YcIQ/view
+- Author: Marie Tolteca, Student at Bren School of Environmental Science and Managment, Masters in Environmental Data Science
+- Data Source: EJScreen: Environmental Justice Screening and Mapping Tool
+- Dataset: https://drive.google.com/file/d/1nG6Nj1bXfzQFOVMO8Km3eNy4SWu1YcIQ/view
 
 - Objectives are to find an environmental issue, build a map, practice manipulating vector and raster data to build multi-layer maps, and practice making maps in R, specifically using a package called 'tmap'. 
 - In the Quarto document, you can find my workflow and how I was able to execute these maps.
