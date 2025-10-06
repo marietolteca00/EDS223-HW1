@@ -1,5 +1,5 @@
 ---
-title: "EDS223-HW1"
+title: "Environmental Issue in Ventura County Author: Marie Tolteca"
 Author: "Marie Tolteca"
 Date: 10/06/2025
 format: html
@@ -9,6 +9,7 @@ editor: visual
 ```{r}
 #| warning: false
 #| message: false
+
 # Loading in packages
 library(tidyverse)
 library(sf)
@@ -23,6 +24,7 @@ cities <- sf::st_read(here::here("data", "City_Boundary","City_Boundary.shp"))
 ```
 
 ```{r}
+#| message: false
 #| warning: false
 # filter to a state you are interested in
 california <- ejscreen %>%
@@ -40,6 +42,7 @@ california_counties <- aggregate(california, by = list(california$CNTY_NAME), FU
 # Run for Interactive Map
 
 ## Making Map Interactive
+
 ```{r}
 #| include: false
 #| message: false
@@ -48,6 +51,7 @@ tmap_mode("view")
 ```
 
 ## Removing Interactive Map. Turning into plot
+
 ```{r}
 #| include: false
 #| message: false
@@ -55,6 +59,7 @@ tmap_mode("plot")
 ```
 
 # Map 1: Low-income population
+
 ```{r}
 #| message: false
 #| warning: false
@@ -74,7 +79,7 @@ ventura_low <- tm_shape(ventura) +
             # background color on map
              bg.color = "lightblue",
             # size of map (portrait, landscape, etc.)
-            asp = 1,
+            asp = 1.2,
             # Bold letters on legend
             legend.title.fontface = 2,
             #Changing font type
@@ -88,9 +93,9 @@ ventura_low <- tm_shape(ventura) +
           # making letters bold
           fontface = "bold",
           # size of letters
-          size = 0.6,
+          size = 0.6)+
           # background label 
-          bgcol = "white") + # does not work in interactive mode
+          #bgcol = "white") + # looks better with interactive map
   #changing the border color of the cities
   tm_borders(col = "green",
              # size of line/border
@@ -111,20 +116,23 @@ print(ventura_low)
 # Saving Map to figs folder
 tmap_save(ventura_low, here("figs", "ventura_low.jpeg"))
 ```
-Interpretation: 
-Low-Income:
-For my interpretation of the percentile for low income, it is evident that in the Oxnard Plain areas (Oxnard, San Buenaventura, and Port Hueneme) and Santa Paula, have a bigger Percentile of Low Income population. This could be because of the type of jobs around these areas, agriculture fields, and construction. Majority of this area consist of the 101- Freeway that means these lower income communities get hit with a big part of particulate matter. Personally, I grew up around these areas, in particular North Oxnard, where it has undergone gentrification and continues to go.
+
+Interpretation: Low-Income: For my interpretation of the percentile for low income, it is evident that in the Oxnard Plain areas (Oxnard, San Buenaventura, and Port Hueneme) and Santa Paula, have a bigger Percentile of Low Income population. This could be because of the type of jobs around these areas, agriculture fields, and construction. Majority of this area consist of the 101- Freeway that means these lower income communities get hit with a big part of particulate matter. Personally, I grew up around these areas, in particular North Oxnard, where it has undergone gentrification and continues to go.
 
 # Map 2: PM2.5 levels
+
 ```{r}
 #| message: false
 #| warning: false
 #| 
 ventura_pm25 <- # Using particulate matter varibale
   tm_shape(ventura)+
+  # variable particulate matter
   tm_polygons("PM25",
               title = "Particulate Matter 2.5 Per City",
+              #Color of map for pm2.5
               palette = "red",
+              #legend numbers
               style = "pretty") +
   
   tm_layout(main.title = "Particulate Matter 2.5 in Ventura County",
@@ -138,29 +146,39 @@ ventura_pm25 <- # Using particulate matter varibale
             text.fontfamily = "Times New Roman",
             # text size
             legend.text.size = 1,
+            #frame on map
             frame.double_line = TRUE)+
   #tm_minimap()+
   tm_compass()+
   tm_scalebar()
   
-
+#printing map
 ventura_pm25
+
+#saving map
 tmap_save(ventura_pm25, here("figs", "ventura_pm25.jpeg"))
 
 ```
 
-Interpretation: 
-Particulate Matter 2.5:
-With the increase of streets, homes, schools, and roads I assumed the increase of particulate matter would come into play. In addition to the increase of particulate matter 2.5 Ventura County has been recently affect with a rise in wildfires. Wildfires have increased within the last few years mostly in the mountains where dry areas are common, as well as dry river beds with invasive species. In Ventura County the low income population seems to be exposed to more air pollution, showcasing an environmental injustice to certain residents.
+Interpretation: Particulate Matter 2.5: With the increase of infrastructure I assumed the increase of particulate matter would come into play. In addition to the increase of particulate matter 2.5 Ventura County has been recently affect with a rise in wildfires. Wildfires have increased within the last few years mostly in the mountains where dry areas are common, as well as dry river beds with invasive species. In Ventura County the low income population seems to be exposed to more air pollution, showcasing an environmental injustice to certain residents.
 
 ```{r}
+#| message: false
+#| warning: false
 #Both Maps Side-by-side
 tmap_arrange(ventura_low, ventura_pm25)
 ```
 
+Overall, using this the `tmap` package, I focused in Ventura County to look at the Low Income population and Particulate Matter 2.5. I was interested to look at the low income population since some areas are being improved more than others, particularly the area in North Oxnard where you can see a dark shade of red. I grew up un this area and lot of gentrification has occurred throughout my lifetime. Being able to document and visually see the population of low income come being affected by new construction is saddening. With the two maps we are able to see that the low income population is affected by environmental injustice.
+
+
 ## For Fun - The State of California Low-Income Population and Air toxics of Cancer Risk in California
-- Interesting how most of the central valley and surrounding areas have a higher percent of air toxic cancer risk than anywhere else in the state of California. I have a hypothesis of why that might be, the central valley is known to have lots of agriculture fields. It is one of the highest producers throughout California, the pesticides that the agriculture needs might have an affect towards these communities.
+
+-   Interesting how most of the central valley and surrounding areas have a higher percent of air toxic cancer risk than anywhere else in the state of California. I have a hypothesis of why that might be, the central valley is known to have lots of agriculture fields. It is one of the highest producers throughout California, the pesticides that the agriculture needs might have an affect towards these communities.
+
 ```{r}
+#| message: false
+#| warning: false
 # Printing only the state of California
 CA_Low_Income <- tm_shape(california_counties) +
   # Showcasing Low - income across California
