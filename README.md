@@ -1,2 +1,10 @@
 # EDS223-HW1
-Objectives are to find an environmental issue, build a map, practice manipulating vector and raster data to build multi-layer maps, and practice making maps in R, specifically using a package called 'tmap'
+
+- Author: Marie Tolteca, Student at Bren School of Environmental Science and Managment, Masters in Environmental Data Science
+- Data Source: EJScreen: Environmental Justice Screening and Mapping Tool
+- Dataset: https://drive.google.com/file/d/1nG6Nj1bXfzQFOVMO8Km3eNy4SWu1YcIQ/view
+
+- Objectives are to find an environmental issue, build a map, practice manipulating vector and raster data to build multi-layer maps, and practice making maps in R, specifically using a package called 'tmap'. 
+- In the Quarto document, you can find my workflow and how I was able to execute these maps.
+Using this package, I focused in Ventura County to look at the Low Income population and Particulate Matter 2.5. I was interested to look at the low income population since some areas are being imporoved more than others, particularly the area in North Oxnard where you can see a dark shade of red. I grew up un this area and lot of gentrification has occured throughout my lifetime. Being able to document and visually see the population of low income come being affected by new construction is saddening. 
+With the increase of streets, homes, schools, and roads I assumed the increase of particulate matter would come into play. In addition to the increase of particulate matter 2.5 Ventura County has been recently affect with a rise in wildfires. Wildfires have increased within the last few years mostly in the mountains where dry areas are common, as well as dry river beds with invasive species. In Ventura County the low income population seems to be exposed to more air pollution, showcasing an environmental injustice to certain residents.

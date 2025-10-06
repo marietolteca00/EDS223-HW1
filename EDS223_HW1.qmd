@@ -6,14 +6,17 @@ editor: visual
 
 ```{r}
 #| warning: false
+# Loading in packages
 library(tidyverse)
 library(sf)
 library(here)
 library(dplyr)
 library(tmap)
 
-# read in geodatabase of EJScreen data at the Census Block Group level
+# read in geodatabase of EJScreen data at the Census Block Group level and cities.
 ejscreen <- sf::st_read(here::here("data", "ejscreen","EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb")) 
+cities <- sf::st_read(here::here("data", "City_Boundary","City_Boundary.shp")) 
+
 ```
 
 ```{r}
@@ -31,34 +34,34 @@ california_counties <- aggregate(california, by = list(california$CNTY_NAME), FU
 # tried 'drop_na()' but mapping didn't work ' 
 ```
 
+# Run for Interactive Map
+
+## Making Map Interactive
 ```{r}
-# #filter to a state you are interested in
-# oregon <- ejscreen %>%
-#   dplyr::filter(st_abbrev == "OR")
-# 
-# # filter to a county you are interested in
-# harney <- ejscreen %>%
-#   dplyr::filter(cnty_name %in% c("Harney County"))
-# 
-# #Check it exist
-# #Harney <- subset(ejscreen, state_name == 'Oregon' & cnty_name == 'Harney County')
-#  
-# # find the average values for all variables within counties
-# oregon_counties <- aggregate(oregon, by = list(oregon$cnty_name), FUN = mean)
+tmap_mode("view")
+```
+
+## Removing Interactive Map. Turning into plot
+```{r}
+tmap_mode("plot")
 ```
 
 # Map 1: Low-income population
 ```{r}
+# Name of map- using ventura data
 ventura_low <- tm_shape(ventura) +
   # Using low income varibale
-  tm_polygons("LOWINCOME",
+  tm_polygons("P_LOWINCPCT",
+              # adding title
               title = "Percent of Low Income Pop.",
+              # color palette that shows percentile low income
               palette = "YlOrRd",
+              # style for legend numbers
               style = "pretty") +
   
   tm_layout(title = "Ventura County Low Income Population (Pop.)",
             # background color on map
-             bg.color = "lightgrey",
+             bg.color = "lightblue",
             # size of map (portrait, landscape, etc.)
             asp = 1,
             # Bold letters on legend
@@ -66,26 +69,40 @@ ventura_low <- tm_shape(ventura) +
             #Changing font type
             text.fontfamily = "Times New Roman",
             # text size
-            legend.text.size = 1)+
+            legend.text.size = 0.8,
+            frame.double_line = TRUE)+
+  tm_shape(cities) +
+  # Looks better when in interactive mode
+  tm_text("city_name",
+          # making letters bold
+          fontface = "bold",
+          # size of letters
+          size = 0.6,
+          # background label 
+          bgcol = "white") + # does not work in interactive mode
+  #changing the border color of the cities
+  tm_borders(col = "green",
+             # size of line/border
+             size=0.5)+
   # adding minimap
   tm_minimap()+
     tm_layout(
-    attr.position = c("right", "bottom")) +
+      #position of mini globe
+    attr.position = c("right", "bottom"))+
+  # adding compass
   tm_compass()+
+  # adding scale bar
   tm_scalebar()
 
+# Printing map
 print(ventura_low)
-```
 
-# Making Map Interactive
-```{r}
-tmap_mode("view")
+# Saving Map to figs folder
+tmap_save(ventura_low, here("figs", "ventura_low.jpeg"))
 ```
-# Removing Interactive Map. Turning into plot
-```{r}
-tmap_mode("plot")
-```
-
+Interpretation: 
+Low-Income:
+For my interpretation of the percentile for low income, it is evident that in the Oxnard Plain areas (Oxnard, San Buenaventura, and Port Hueneme) and Santa Paula, have a bigger Percentile of Low Income population. This could be because of the type of jobs around these areas, agriculture fields, and construction. Majority of this area consist of the 101- Freeway that means these lower income communities get hit with a big part of particulate matter. Personally, I grew up around these areas, in particular North Oxnard, where it has undergone gentrification and continues to go.
 
 # Map 2: PM2.5 levels
 ```{r}
@@ -93,7 +110,7 @@ ventura_pm25 <- # Using particulate matter varibale
   tm_shape(ventura)+
   tm_polygons("PM25",
               title = "Particulate Matter 2.5 Per County",
-              palette = "Pastel1",
+              palette = "red",
               style = "pretty") +
   
   tm_layout(title = "Particulate Matter 2.5 in Ventura County",
@@ -106,40 +123,52 @@ ventura_pm25 <- # Using particulate matter varibale
             #Changing font type
             text.fontfamily = "Times New Roman",
             # text size
-            legend.text.size = 1)+
+            legend.text.size = 1,
+            frame.double_line = TRUE)+
   #tm_minimap()+
   tm_compass()+
   tm_scalebar()
   
 
 ventura_pm25
+tmap_save(ventura_pm25, here("figs", "ventura_pm25.jpeg"))
 
 ```
+
+Interpretation: 
+Particulate Matter 2.5:
+With the increase of streets, homes, schools, and roads I assumed the increase of particulate matter would come into play. In addition to the increase of particulate matter 2.5 Ventura County has been recently affect with a rise in wildfires. Wildfires have increased within the last few years mostly in the mountains where dry areas are common, as well as dry river beds with invasive species. In Ventura County the low income population seems to be exposed to more air pollution, showcasing an environmental injustice to certain residents.
 
 ```{r}
 #Both Maps Side-by-side
 tmap_arrange(ventura_low, ventura_pm25)
-
 ```
 
 ## For Fun - The State of California Low-Income Population and Air toxics of Cancer Risk in California
 - Interesting how most of the central valley and surrounding areas have a higher percent of air toxic cancer risk than anywhere else in the state of California. I have a hypothesis of why that might be, the central valley is known to have lots of agriculture fields. It is one of the highest producers throughout California, the pesticides that the agriculture needs might have an affect towards these communities.
 ```{r}
 # Printing only the state of California
-tm_shape(california_counties) +
+CA_Low_Income <- tm_shape(california_counties) +
   # Showcasing Low - income across California
-  tm_polygons("LOWINCOME", # Defines how to plot the object
+  tm_polygons("P_LOWINCPCT", # Defines how to plot the object
               title = "Percent of Low - Income - Population",
-              palette = "pink") +
+              palette = "red",
+              style = "quantile") +
   tm_symbols(size = "CANCER",
-             shape = 8,
+             shape = 2,
              size.legend = tm_legend(orientation = "portrait",
-                                     title = "Air toxics Cancer Risk (per County)",
-                                     palette = "plasma"))+# Color not working
-  #tm_borders() +
+                                     title = "Air toxics Cancer Risk (per County)"),
+             col = "deepskyblue2")+
+  tm_layout(frame.double_line = TRUE,
+            bg.color = "lightblue") +
   tm_shape(ventura) +
   tm_lines()+
   tm_scalebar(position = c("left", "bottom"))+
   tm_compass(position = c("right", "top")) +
   tm_minimap(position = c("right","top"))
+
+CA_Low_Income
+
+tmap_save(CA_Low_Income, here("figs", "CA_lowincome.jpeg"))
+
 ```
