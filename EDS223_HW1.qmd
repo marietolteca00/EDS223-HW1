@@ -76,53 +76,21 @@ ventura_low <- tm_shape(ventura) +
 
 print(ventura_low)
 ```
+
+# Making Map Interactive
 ```{r}
 tmap_mode("view")
 ```
-
-
-
-# Map 2: PM2.5 levels
-
-```{r}
-ventura_low <- tm_shape(ventura) +
-  # Using low income varibale
-  tm_polygons("LOWINCOME",
-              title = "Percent of Low Income Pop.",
-              palette = "YlOrRd",
-              style = "pretty") +
-  
-  tm_layout(title = "Ventura County Low Income Population (Pop.)",
-            # background color on map
-             bg.color = "lightgrey",
-            # size of map (portrait, landscape, etc.)
-            asp = 1,
-            # Bold letters on legend
-            legend.title.fontface = 2,
-            #Changing font type
-            text.fontfamily = "Times New Roman",
-            # text size
-            legend.text.size = 1)+
-  # adding minimap
-  tm_minimap()+
-    tm_layout(
-    attr.position = c("right", "bottom")) +
-  tm_compass()+
-  tm_scalebar()
-
-print(ventura_low)
-```
-
+# Removing Interactive Map. Turning into plot
 ```{r}
 tmap_mode("plot")
 ```
 
 
+# Map 2: PM2.5 levels
 ```{r}
-#map_pm25 <- 
-
-# Using particulate matter varibale
-tm_shape(ventura)+
+ventura_pm25 <- # Using particulate matter varibale
+  tm_shape(ventura)+
   tm_polygons("PM25",
               title = "Particulate Matter 2.5 Per County",
               palette = "Pastel1",
@@ -144,18 +112,18 @@ tm_shape(ventura)+
   tm_scalebar()
   
 
-#map_pm25
+ventura_pm25
 
 ```
 
 ```{r}
 #Both Maps Side-by-side
-tmap_arrange(map_low_income, map_pm25)
+tmap_arrange(ventura_low, ventura_pm25)
 
 ```
 
-## For Fun -
-
+## For Fun - The State of California Low-Income Population and Air toxics of Cancer Risk in California
+- Interesting how most of the central valley and surrounding areas have a higher percent of air toxic cancer risk than anywhere else in the state of California. I have a hypothesis of why that might be, the central valley is known to have lots of agriculture fields. It is one of the highest producers throughout California, the pesticides that the agriculture needs might have an affect towards these communities.
 ```{r}
 # Printing only the state of California
 tm_shape(california_counties) +
@@ -166,7 +134,7 @@ tm_shape(california_counties) +
   tm_symbols(size = "CANCER",
              shape = 8,
              size.legend = tm_legend(orientation = "portrait",
-                                     title = "Areas of Cancer (per County)",
+                                     title = "Air toxics Cancer Risk (per County)",
                                      palette = "plasma"))+# Color not working
   #tm_borders() +
   tm_shape(ventura) +
