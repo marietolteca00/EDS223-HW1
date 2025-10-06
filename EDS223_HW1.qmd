@@ -1,11 +1,14 @@
 ---
 title: "EDS223-HW1"
+Author: "Marie Tolteca"
+Date: 10/06/2025
 format: html
 editor: visual
 ---
 
 ```{r}
 #| warning: false
+#| message: false
 # Loading in packages
 library(tidyverse)
 library(sf)
@@ -38,16 +41,24 @@ california_counties <- aggregate(california, by = list(california$CNTY_NAME), FU
 
 ## Making Map Interactive
 ```{r}
+#| include: false
+#| message: false
+
 tmap_mode("view")
 ```
 
 ## Removing Interactive Map. Turning into plot
 ```{r}
+#| include: false
+#| message: false
 tmap_mode("plot")
 ```
 
 # Map 1: Low-income population
 ```{r}
+#| message: false
+#| warning: false
+
 # Name of map- using ventura data
 ventura_low <- tm_shape(ventura) +
   # Using low income varibale
@@ -59,7 +70,7 @@ ventura_low <- tm_shape(ventura) +
               # style for legend numbers
               style = "pretty") +
   
-  tm_layout(title = "Ventura County Low Income Population (Pop.)",
+  tm_layout(main.title = "Ventura County Low Income Population (Pop.)",
             # background color on map
              bg.color = "lightblue",
             # size of map (portrait, landscape, etc.)
@@ -106,14 +117,17 @@ For my interpretation of the percentile for low income, it is evident that in th
 
 # Map 2: PM2.5 levels
 ```{r}
+#| message: false
+#| warning: false
+#| 
 ventura_pm25 <- # Using particulate matter varibale
   tm_shape(ventura)+
   tm_polygons("PM25",
-              title = "Particulate Matter 2.5 Per County",
+              title = "Particulate Matter 2.5 Per City",
               palette = "red",
               style = "pretty") +
   
-  tm_layout(title = "Particulate Matter 2.5 in Ventura County",
+  tm_layout(main.title = "Particulate Matter 2.5 in Ventura County",
             # background color on map
              bg.color = "lightgrey",
             # size of map (portrait, landscape, etc.)
