@@ -1,0 +1,177 @@
+---
+title: "EDS223-HW1"
+format: html
+editor: visual
+---
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(sf)
+library(here)
+library(dplyr)
+library(tmap)
+
+# read in geodatabase of EJScreen data at the Census Block Group level
+ejscreen <- sf::st_read(here::here("data", "ejscreen","EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb")) 
+```
+
+```{r}
+#| warning: false
+# filter to a state you are interested in
+california <- ejscreen %>%
+  dplyr::filter(ST_ABBREV == "CA") 
+
+# filter to a county you are interested in
+ventura <- ejscreen %>%
+  dplyr::filter(CNTY_NAME %in% c("Ventura County"))
+
+# find the average values for all variables within counties
+california_counties <- aggregate(california, by = list(california$CNTY_NAME), FUN = mean)
+# tried 'drop_na()' but mapping didn't work ' 
+```
+
+```{r}
+# #filter to a state you are interested in
+# oregon <- ejscreen %>%
+#   dplyr::filter(st_abbrev == "OR")
+# 
+# # filter to a county you are interested in
+# harney <- ejscreen %>%
+#   dplyr::filter(cnty_name %in% c("Harney County"))
+# 
+# #Check it exist
+# #Harney <- subset(ejscreen, state_name == 'Oregon' & cnty_name == 'Harney County')
+#  
+# # find the average values for all variables within counties
+# oregon_counties <- aggregate(oregon, by = list(oregon$cnty_name), FUN = mean)
+```
+
+# Map 1: Low-income population
+```{r}
+ventura_low <- tm_shape(ventura) +
+  # Using low income varibale
+  tm_polygons("LOWINCOME",
+              title = "Percent of Low Income Pop.",
+              palette = "YlOrRd",
+              style = "pretty") +
+  
+  tm_layout(title = "Ventura County Low Income Population (Pop.)",
+            # background color on map
+             bg.color = "lightgrey",
+            # size of map (portrait, landscape, etc.)
+            asp = 1,
+            # Bold letters on legend
+            legend.title.fontface = 2,
+            #Changing font type
+            text.fontfamily = "Times New Roman",
+            # text size
+            legend.text.size = 1)+
+  # adding minimap
+  tm_minimap()+
+    tm_layout(
+    attr.position = c("right", "bottom")) +
+  tm_compass()+
+  tm_scalebar()
+
+print(ventura_low)
+```
+```{r}
+tmap_mode("view")
+```
+
+
+
+# Map 2: PM2.5 levels
+
+```{r}
+ventura_low <- tm_shape(ventura) +
+  # Using low income varibale
+  tm_polygons("LOWINCOME",
+              title = "Percent of Low Income Pop.",
+              palette = "YlOrRd",
+              style = "pretty") +
+  
+  tm_layout(title = "Ventura County Low Income Population (Pop.)",
+            # background color on map
+             bg.color = "lightgrey",
+            # size of map (portrait, landscape, etc.)
+            asp = 1,
+            # Bold letters on legend
+            legend.title.fontface = 2,
+            #Changing font type
+            text.fontfamily = "Times New Roman",
+            # text size
+            legend.text.size = 1)+
+  # adding minimap
+  tm_minimap()+
+    tm_layout(
+    attr.position = c("right", "bottom")) +
+  tm_compass()+
+  tm_scalebar()
+
+print(ventura_low)
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+
+```{r}
+#map_pm25 <- 
+
+# Using particulate matter varibale
+tm_shape(ventura)+
+  tm_polygons("PM25",
+              title = "Particulate Matter 2.5 Per County",
+              palette = "Pastel1",
+              style = "pretty") +
+  
+  tm_layout(title = "Particulate Matter 2.5 in Ventura County",
+            # background color on map
+             bg.color = "lightgrey",
+            # size of map (portrait, landscape, etc.)
+            asp = 1,
+            # Bold letters on legend
+            legend.title.fontface = 2,
+            #Changing font type
+            text.fontfamily = "Times New Roman",
+            # text size
+            legend.text.size = 1)+
+  #tm_minimap()+
+  tm_compass()+
+  tm_scalebar()
+  
+
+#map_pm25
+
+```
+
+```{r}
+#Both Maps Side-by-side
+tmap_arrange(map_low_income, map_pm25)
+
+```
+
+## For Fun -
+
+```{r}
+# Printing only the state of California
+tm_shape(california_counties) +
+  # Showcasing Low - income across California
+  tm_polygons("LOWINCOME", # Defines how to plot the object
+              title = "Percent of Low - Income - Population",
+              palette = "pink") +
+  tm_symbols(size = "CANCER",
+             shape = 8,
+             size.legend = tm_legend(orientation = "portrait",
+                                     title = "Areas of Cancer (per County)",
+                                     palette = "plasma"))+# Color not working
+  #tm_borders() +
+  tm_shape(ventura) +
+  tm_lines()+
+  tm_scalebar(position = c("left", "bottom"))+
+  tm_compass(position = c("right", "top")) +
+  tm_minimap(position = c("right","top"))
+```
